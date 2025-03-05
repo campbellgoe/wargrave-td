@@ -383,7 +383,7 @@ export default function TowerDefenseGame() {
   const debugTowerAttacks = () => {
     if (!isGameRunning) return null
 
-    const attacks = []
+    const attacks: {tower: string; enemy: string; distance: number; range: number; health: number; effective: boolean }[] = []
 
     placedTowers.forEach((tower) => {
       spawnedEnemies.forEach((enemy) => {

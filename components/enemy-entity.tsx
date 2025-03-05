@@ -151,7 +151,7 @@ export default function EnemyEntity({ enemy, arenaWidth, arenaHeight, onPosition
         // Initial position set by ref in useEffect
       }}
     >
-      <span className=" bg-black text-white font-bold text-xs">{enemy.id}</span>
+      <span className="rounded-sm bg-black text-white font-bold text-xs">{enemy.id}</span>
 
       {/* Health bar */}
       <div className="absolute -top-3 left-0 w-full h-1 bg-gray-800 rounded-full overflow-hidden">

@@ -30,18 +30,6 @@ export default function ClientInfo() {
                   <h4 className="font-medium">{name}</h4>
                   <p className="text-sm text-muted-foreground">Location: {details.location}</p>
                   <p className="text-sm text-muted-foreground">Purpose: {details.purpose}</p>
-                  {details.access_control && (
-                    <div className="mt-1 text-xs">
-                      <p>Access Control:</p>
-                      <ul className="list-disc pl-4">
-                        {Object.entries(details.access_control).map(([role, access]) => (
-                          <li key={role}>
-                            {role}: {access}
-                          </li>
-                        ))}
-                      </ul>
-                    </div>
-                  )}
                 </div>
               ))}
             </div>
