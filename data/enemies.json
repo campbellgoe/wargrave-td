@@ -1,0 +1,234 @@
+{
+  "virus": {
+    "id": "virus",
+    "name": "Computer Virus",
+    "description": "Self-replicating malicious code that attaches to legitimate programs and spreads when executed.",
+    "attackType": "Infects files and programs, causing system damage and data corruption.",
+    "weaknesses": ["antivirus", "sandbox", "updates", "edrendpoint"],
+    "severity": "High",
+    "speed": "Medium",
+    "color": "#ef4444",
+    "symbol": "V"
+  },
+  "phishing": {
+    "id": "phishing",
+    "name": "Phishing Campaign",
+    "description": "Fraudulent attempt to obtain sensitive information by disguising as a trustworthy entity.",
+    "attackType": "Social engineering via fake emails, websites, or messages.",
+    "weaknesses": ["training", "mfa", "passwordless", "ssl"],
+    "severity": "High",
+    "speed": "Medium",
+    "color": "#f59e0b",
+    "symbol": "P"
+  },
+  "ddos": {
+    "id": "ddos",
+    "name": "DDoS Attack",
+    "description": "Distributed Denial of Service attack that floods systems with traffic to exhaust resources.",
+    "attackType": "Overwhelms network infrastructure using multiple compromised systems.",
+    "weaknesses": ["firewall", "ips", "siem"],
+    "severity": "Extreme",
+    "speed": "Very Fast",
+    "color": "#8b5cf6",
+    "symbol": "D"
+  },
+  "ransomware": {
+    "id": "ransomware",
+    "name": "Ransomware",
+    "description": "Malware that encrypts files and demands payment for decryption keys.",
+    "attackType": "Encrypts critical data and demands ransom for recovery.",
+    "weaknesses": ["backup", "antivirus", "edrendpoint", "segmentation"],
+    "severity": "Extreme",
+    "speed": "Fast",
+    "color": "#14b8a6",
+    "symbol": "R"
+  },
+  "mitm": {
+    "id": "mitm",
+    "name": "Man-in-the-Middle Attack",
+    "description": "Attacker secretly relays and possibly alters communication between two parties.",
+    "attackType": "Intercepts and modifies data in transit between systems.",
+    "weaknesses": ["vpn", "encryption", "ssl", "firewall"],
+    "severity": "High",
+    "speed": "Medium",
+    "color": "#6366f1",
+    "symbol": "M"
+  },
+  "unauthorized": {
+    "id": "unauthorized",
+    "name": "Unauthorized Access",
+    "description": "Gaining access to systems or data without proper permissions.",
+    "attackType": "Exploits weak credentials or access controls to gain entry.",
+    "weaknesses": ["mfa", "acl", "firewall", "ids", "ips", "monitoring", "passwordless"],
+    "severity": "High",
+    "speed": "Slow",
+    "color": "#ec4899",
+    "symbol": "U"
+  },
+  "insider": {
+    "id": "insider",
+    "name": "Insider Threat",
+    "description": "Malicious activity perpetrated by current or former employees with inside knowledge.",
+    "attackType": "Abuses legitimate access for data theft or sabotage.",
+    "weaknesses": ["training", "acl", "monitoring", "dlp", "siem"],
+    "severity": "High",
+    "speed": "Very Slow",
+    "color": "#64748b",
+    "symbol": "I"
+  },
+  "sql": {
+    "id": "sql",
+    "name": "SQL Injection",
+    "description": "Attack that inserts malicious SQL code into database queries via web inputs.",
+    "attackType": "Manipulates database queries to access, modify, or delete data.",
+    "weaknesses": ["waf", "paramquery", "inputvalidation"],
+    "severity": "High",
+    "speed": "Fast",
+    "color": "#0ea5e9",
+    "symbol": "SQL"
+  },
+  "zeroday": {
+    "id": "zeroday",
+    "name": "Zero-Day Exploit",
+    "description": "Attack targeting previously unknown vulnerabilities before patches are available.",
+    "attackType": "Exploits undisclosed vulnerabilities with no existing defenses.",
+    "weaknesses": ["updates", "ids", "ips", "siem", "sandbox", "edrendpoint"],
+    "severity": "Extreme",
+    "speed": "Very Fast",
+    "color": "#dc2626",
+    "symbol": "0D"
+  },
+  "social": {
+    "id": "social",
+    "name": "Social Engineering",
+    "description": "Psychological manipulation to trick people into revealing confidential information.",
+    "attackType": "Uses deception and manipulation through various communication channels.",
+    "weaknesses": ["training", "mfa", "passwordless"],
+    "severity": "Medium",
+    "speed": "Slow",
+    "color": "#fbbf24",
+    "symbol": "SE"
+  },
+  "xss": {
+    "id": "xss",
+    "name": "Cross-Site Scripting",
+    "description": "Injects malicious scripts into trusted websites viewed by other users.",
+    "attackType": "Executes scripts in users' browsers to steal data or perform actions.",
+    "weaknesses": ["waf", "inputvalidation", "updates", "ips"],
+    "severity": "Medium",
+    "speed": "Fast",
+    "color": "#84cc16",
+    "symbol": "XSS"
+  },
+  "csrf": {
+    "id": "csrf",
+    "name": "Cross-Site Request Forgery",
+    "description": "Forces authenticated users to execute unwanted actions on web applications.",
+    "attackType": "Tricks users into submitting requests they didn't intend.",
+    "weaknesses": ["waf", "inputvalidation"],
+    "severity": "Medium",
+    "speed": "Medium",
+    "color": "#7e22ce",
+    "symbol": "CSRF"
+  },
+  "trojan": {
+    "id": "trojan",
+    "name": "Trojan Horse",
+    "description": "Malware disguised as legitimate software to trick users into installation.",
+    "attackType": "Provides backdoor access while appearing as normal software.",
+    "weaknesses": ["antivirus", "sandbox", "segmentation", "edrendpoint"],
+    "severity": "High",
+    "speed": "Medium",
+    "color": "#b91c1c",
+    "symbol": "TH"
+  },
+  "rootkit": {
+    "id": "rootkit",
+    "name": "Rootkit",
+    "description": "Stealthy malware that provides privileged access while hiding its presence.",
+    "attackType": "Conceals existence and activities from operating system and security tools.",
+    "weaknesses": ["antivirus", "sandbox", "edrendpoint"],
+    "severity": "Extreme",
+    "speed": "Slow",
+    "color": "#4b5563",
+    "symbol": "RK"
+  },
+  "dataexfil": {
+    "id": "dataexfil",
+    "name": "Data Exfiltration",
+    "description": "Unauthorized transfer of data from a computer or network.",
+    "attackType": "Steals sensitive data through covert channels.",
+    "weaknesses": ["dlp", "encryption", "monitoring", "vpn", "siem"],
+    "severity": "High",
+    "speed": "Medium",
+    "color": "#0369a1",
+    "symbol": "EX"
+  },
+  "privilegeesc": {
+    "id": "privilegeesc",
+    "name": "Privilege Escalation",
+    "description": "Exploits bugs or design flaws to gain elevated access to resources.",
+    "attackType": "Gains higher-level permissions than intended.",
+    "weaknesses": ["acl", "monitoring"],
+    "severity": "High",
+    "speed": "Medium",
+    "color": "#9f1239",
+    "symbol": "PE"
+  },
+  "fileinclude": {
+    "id": "fileinclude",
+    "name": "File Inclusion Attack",
+    "description": "Exploits vulnerable include functionality to execute malicious files.",
+    "attackType": "Includes unauthorized files for execution on the server.",
+    "weaknesses": ["waf", "inputvalidation", "updates"],
+    "severity": "High",
+    "speed": "Fast",
+    "color": "#a16207",
+    "symbol": "FI"
+  },
+  "vishing": {
+    "id": "vishing",
+    "name": "Voice Phishing",
+    "description": "Phone-based social engineering to steal personal or financial information.",
+    "attackType": "Uses voice calls to manipulate victims into revealing sensitive data.",
+    "weaknesses": ["training"],
+    "severity": "Medium",
+    "speed": "Slow",
+    "color": "#ea580c",
+    "symbol": "VP"
+  },
+  "credentialtheft": {
+    "id": "credentialtheft",
+    "name": "Credential Theft",
+    "description": "Stealing usernames, passwords, or authentication tokens.",
+    "attackType": "Captures login credentials through various techniques.",
+    "weaknesses": ["mfa", "passwordless"],
+    "severity": "High",
+    "speed": "Fast",
+    "color": "#4338ca",
+    "symbol": "CT"
+  },
+  "bruteforce": {
+    "id": "bruteforce",
+    "name": "Brute Force Attack",
+    "description": "Systematically checks all possible passwords until the correct one is found.",
+    "attackType": "Attempts many password combinations to gain unauthorized access.",
+    "weaknesses": ["mfa", "passwordless"],
+    "severity": "Medium",
+    "speed": "Very Slow",
+    "color": "#475569",
+    "symbol": "BF"
+  },
+  "portscanner": {
+    "id": "portscanner",
+    "name": "Port Scanning",
+    "description": "Probes network ports to find services that might be exploitable.",
+    "attackType": "Maps network services to identify potential vulnerabilities.",
+    "weaknesses": ["firewall", "ids", "honeypot"],
+    "severity": "Low",
+    "speed": "Fast",
+    "color": "#0891b2",
+    "symbol": "PS"
+  }
+}
+

@@ -1,0 +1,65 @@
+{
+  "client": "Dowding Federation - Wargrave College",
+  "budget": "UKP £5.3 million",
+  "infrastructure": {
+    "servers": {
+      "HR Servers": {
+        "location": "Network Server Room",
+        "purpose": "Store personal and payroll data of staff"
+      },
+      "Student Information System (SIS)": {
+        "location": "Network Server Room",
+        "purpose": "Store student contact details, medical history, assessment data, attendance records, SEN data"
+      },
+      "Fileserver": {
+        "location": "Non-secured IT Technicians' office",
+        "purpose": "Public access storage for educational resources, student coursework, and homework",
+        "access_control": {
+          "students": "Read Access",
+          "teachers": "Read/Write Access"
+        }
+      },
+      "Email Exchange Server": {
+        "location": "Non-secured IT Technicians' office",
+        "purpose": "Store all staff and student emails, including historical emails"
+      },
+      "Backup NAS Drive": {
+        "location": "Non-secured IT Technicians' office",
+        "purpose": "Backup storage for college data"
+      },
+      "Network Domain Server": {
+        "location": "Non-secured IT Technicians' office",
+        "purpose": "Manage network authentication and domain services"
+      }
+    }
+  },
+  "virtual_learning_platform": {
+    "name": "VLP",
+    "purpose": "Web interface to the fileserver for remote access to course materials"
+  },
+  "operating_system": {
+    "computers": "Windows 8.1 (outdated, not upgraded due to cost constraints)"
+  },
+  "remote_access": {
+    "vpn": "Freeware VPN for teachers to access college materials from home"
+  },
+  "security_risks": [
+    {
+      "issue": "Unsecured Server Room",
+      "description": "The IT Technicians' office is never locked, allowing unauthorized physical access to critical infrastructure."
+    },
+    {
+      "issue": "Outdated Operating System",
+      "description": "Windows 8.1 is no longer receiving security updates, making it vulnerable to exploits."
+    },
+    {
+      "issue": "Freeware VPN Usage",
+      "description": "Freeware VPNs may lack proper security measures, exposing the network to cyber threats."
+    },
+    {
+      "issue": "Public Access Fileserver",
+      "description": "Students have Read Access, increasing the risk of data leaks or unauthorized data extraction."
+    }
+  ]
+}
+

@@ -1,0 +1,256 @@
+{
+  "firewall": {
+    "id": "firewall",
+    "name": "Firewall",
+    "description": "Creates a barrier that blocks unauthorized network traffic and filters packets based on security rules.",
+    "effectiveness": "High",
+    "counters": ["ddos", "unauthorized", "mitm", "portscanner"],
+    "color": "#f97316",
+    "symbol": "FW",
+    "effects": ["block", "filter"],
+    "attackType": "area"
+  },
+  "antivirus": {
+    "id": "antivirus",
+    "name": "Anti-virus Software",
+    "description": "Detects and removes malware from systems using signature and heuristic-based detection.",
+    "effectiveness": "High",
+    "counters": ["virus", "ransomware", "trojan", "rootkit"],
+    "color": "#22c55e",
+    "symbol": "AV",
+    "effects": ["scan", "detect", "remove"],
+    "attackType": "single"
+  },
+  "mfa": {
+    "id": "mfa",
+    "name": "Multi-Factor Authentication",
+    "description": "Requires multiple forms of verification beyond passwords, such as biometrics or one-time codes.",
+    "effectiveness": "Very High",
+    "counters": ["phishing", "unauthorized", "social", "credentialtheft", "bruteforce"],
+    "color": "#a855f7",
+    "symbol": "MFA",
+    "effects": ["block", "authenticate"],
+    "attackType": "single"
+  },
+  "ids": {
+    "id": "ids",
+    "name": "Intrusion Detection System",
+    "description": "Monitors network traffic for suspicious activity and policy violations.",
+    "effectiveness": "Medium",
+    "counters": ["unauthorized", "zeroday", "portscanner", "insider"],
+    "color": "#ec4899",
+    "symbol": "IDS",
+    "effects": ["detect", "alert"],
+    "attackType": "area"
+  },
+  "ips": {
+    "id": "ips",
+    "name": "Intrusion Prevention System",
+    "description": "Actively blocks malicious traffic and prevents exploitation of vulnerabilities.",
+    "effectiveness": "High",
+    "counters": ["ddos", "zeroday", "unauthorized", "xss"],
+    "color": "#d946ef",
+    "symbol": "IPS",
+    "effects": ["block", "prevent"],
+    "attackType": "area"
+  },
+  "training": {
+    "id": "training",
+    "name": "Security Awareness Training",
+    "description": "Educates users to recognize and avoid security threats through simulations and workshops.",
+    "effectiveness": "High",
+    "counters": ["phishing", "social", "insider", "vishing"],
+    "color": "#0ea5e9",
+    "symbol": "SAT",
+    "effects": ["prevent", "educate"],
+    "attackType": "area"
+  },
+  "segmentation": {
+    "id": "segmentation",
+    "name": "Network Segmentation",
+    "description": "Divides the network into isolated segments to contain breaches and limit lateral movement.",
+    "effectiveness": "High",
+    "counters": ["virus", "unauthorized", "insider", "ransomware", "trojan"],
+    "color": "#3b82f6",
+    "symbol": "SEG",
+    "effects": ["isolate", "contain"],
+    "attackType": "area"
+  },
+  "encryption": {
+    "id": "encryption",
+    "name": "Data Encryption",
+    "description": "Converts data into encoded format that can only be accessed with a decryption key.",
+    "effectiveness": "High",
+    "counters": ["mitm", "unauthorized", "dataexfil", "insider"],
+    "color": "#6366f1",
+    "symbol": "ENC",
+    "effects": ["protect", "secure"],
+    "attackType": "single"
+  },
+  "acl": {
+    "id": "acl",
+    "name": "Access Control Lists",
+    "description": "Restricts system access based on user roles and permissions.",
+    "effectiveness": "High",
+    "counters": ["unauthorized", "insider", "privilegeesc"],
+    "color": "#8b5cf6",
+    "symbol": "ACL",
+    "effects": ["restrict", "control"],
+    "attackType": "area"
+  },
+  "waf": {
+    "id": "waf",
+    "name": "Web Application Firewall",
+    "description": "Filters, monitors, and blocks HTTP traffic to and from web applications.",
+    "effectiveness": "High",
+    "counters": ["sql", "xss", "csrf", "fileinclude"],
+    "color": "#f43f5e",
+    "symbol": "WAF",
+    "effects": ["filter", "sanitize"],
+    "attackType": "single"
+  },
+  "passwordless": {
+    "id": "passwordless",
+    "name": "Passwordless Authentication",
+    "description": "Uses biometrics, security keys, or passkeys instead of traditional passwords.",
+    "effectiveness": "High",
+    "counters": ["phishing", "social", "unauthorized", "credentialtheft", "bruteforce"],
+    "color": "#14b8a6",
+    "symbol": "PLA",
+    "effects": ["authenticate", "verify"],
+    "attackType": "single"
+  },
+  "monitoring": {
+    "id": "monitoring",
+    "name": "Behavioral Monitoring",
+    "description": "Analyzes user activity patterns to detect anomalous behavior.",
+    "effectiveness": "Medium",
+    "counters": ["insider", "unauthorized", "dataexfil", "privilegeesc"],
+    "color": "#64748b",
+    "symbol": "BM",
+    "effects": ["monitor", "detect"],
+    "attackType": "area"
+  },
+  "updates": {
+    "id": "updates",
+    "name": "Security Patching",
+    "description": "Regularly applies software updates to fix known vulnerabilities.",
+    "effectiveness": "High",
+    "counters": ["zeroday", "virus", "xss", "fileinclude"],
+    "color": "#0d9488",
+    "symbol": "PATCH",
+    "effects": ["patch", "fix"],
+    "attackType": "area"
+  },
+  "vpn": {
+    "id": "vpn",
+    "name": "VPN (Virtual Private Network)",
+    "description": "Creates encrypted tunnels for secure remote access to network resources.",
+    "effectiveness": "High",
+    "counters": ["mitm", "unauthorized", "dataexfil"],
+    "color": "#10b981",
+    "symbol": "VPN",
+    "effects": ["encrypt", "tunnel"],
+    "attackType": "single"
+  },
+  "backup": {
+    "id": "backup",
+    "name": "Backup & Recovery",
+    "description": "Creates and maintains secure copies of data for restoration after incidents.",
+    "effectiveness": "High",
+    "counters": ["ransomware", "insider", "dataexfil"],
+    "color": "#fbbf24",
+    "symbol": "BKP",
+    "effects": ["recover", "restore"],
+    "attackType": "area"
+  },
+  "ssl": {
+    "id": "ssl",
+    "name": "SSL/TLS Certificates",
+    "description": "Establishes encrypted connections between clients and servers, verifying server identity.",
+    "effectiveness": "Very High",
+    "counters": ["mitm", "phishing"],
+    "color": "#0284c7",
+    "symbol": "SSL",
+    "effects": ["verify", "encrypt"],
+    "attackType": "area"
+  },
+  "siem": {
+    "id": "siem",
+    "name": "SIEM System",
+    "description": "Security Information and Event Management system that provides real-time analysis of security alerts.",
+    "effectiveness": "High",
+    "counters": ["ddos", "unauthorized", "insider", "zeroday", "dataexfil"],
+    "color": "#7c3aed",
+    "symbol": "SIEM",
+    "effects": ["analyze", "alert"],
+    "attackType": "area"
+  },
+  "dlp": {
+    "id": "dlp",
+    "name": "Data Loss Prevention",
+    "description": "Detects and prevents data breaches, exfiltration, and unauthorized data transfers.",
+    "effectiveness": "High",
+    "counters": ["dataexfil", "insider"],
+    "color": "#2563eb",
+    "symbol": "DLP",
+    "effects": ["monitor", "block"],
+    "attackType": "single"
+  },
+  "paramquery": {
+    "id": "paramquery",
+    "name": "Parameterized Queries",
+    "description": "Uses prepared statements with bound parameters to prevent SQL injection attacks.",
+    "effectiveness": "Very High",
+    "counters": ["sql"],
+    "color": "#db2777",
+    "symbol": "PQ",
+    "effects": ["sanitize", "validate"],
+    "attackType": "single"
+  },
+  "sandbox": {
+    "id": "sandbox",
+    "name": "Security Sandbox",
+    "description": "Isolated environment for executing suspicious code without risking the main system.",
+    "effectiveness": "High",
+    "counters": ["virus", "trojan", "zeroday", "rootkit"],
+    "color": "#ca8a04",
+    "symbol": "SBX",
+    "effects": ["isolate", "analyze"],
+    "attackType": "single"
+  },
+  "edrendpoint": {
+    "id": "edrendpoint",
+    "name": "EDR Solution",
+    "description": "Endpoint Detection and Response tools that monitor endpoints for suspicious activities.",
+    "effectiveness": "High",
+    "counters": ["ransomware", "trojan", "rootkit", "zeroday"],
+    "color": "#15803d",
+    "symbol": "EDR",
+    "effects": ["detect", "respond"],
+    "attackType": "single"
+  },
+  "inputvalidation": {
+    "id": "inputvalidation",
+    "name": "Input Validation",
+    "description": "Verifies that input data meets expected formats before processing.",
+    "effectiveness": "High",
+    "counters": ["sql", "xss", "fileinclude", "csrf"],
+    "color": "#9333ea",
+    "symbol": "IV",
+    "effects": ["validate", "sanitize"],
+    "attackType": "single"
+  },
+  "honeypot": {
+    "id": "honeypot",
+    "name": "Honeypot System",
+    "description": "Decoy system designed to attract attackers and study their techniques.",
+    "effectiveness": "Medium",
+    "counters": ["unauthorized", "portscanner", "zeroday"],
+    "color": "#f59e0b",
+    "symbol": "HP",
+    "effects": ["deceive", "detect"],
+    "attackType": "area"
+  }
+}
+
