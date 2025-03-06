@@ -654,8 +654,7 @@ export default function TowerDefenseGame() {
         )}
       </div>
 
-      <div className="flex justify-between items-center mb-2">
-        <h2 className="text-xl font-semibold">Network Arena</h2>
+      <div className="sticky top-32 z-50 flex justify-between items-center mb-2">
         <button
           onClick={toggleGame}
           className={`px-4 py-2 rounded-md ${
