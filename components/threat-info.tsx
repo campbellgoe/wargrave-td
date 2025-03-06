@@ -65,7 +65,7 @@ export default function ThreatInfo({ threats, activeThreats, encounteredThreats 
   }
 
   return (
-    <div className="p-4 bg-card border border-border rounded-b-lg shadow-md h-[calc(50dvh-100px)] overflow-auto">
+    <div className="p-4 bg-card border border-border rounded-b-lg shadow-md h-full overflow-auto">
       {/* Add view mode toggle buttons after the search bar */}
       <div className="mb-4 flex flex-col gap-2">
         <div className="relative">

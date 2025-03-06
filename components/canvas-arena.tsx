@@ -499,7 +499,7 @@ const CanvasArena = forwardRef<HTMLDivElement, CanvasArenaProps>(
     return (
       <div
         ref={ref}
-        className={cn(`sticky bottom-0 max-h-[60vh] bg-linear-to-t from-white to-transparent backdrop-blur-[2px] w-full h-[500px] border-2 rounded-lg`,
+        className={cn(`sticky bottom-0 max-h-[60vh] bg-linear-to-t from-[#ffe4e4] to-transparent backdrop-blur-[2px] w-full h-[500px] border-2 rounded-lg`,
           selectedTower ? "border-primary cursor-crosshair" : "border-border"
         ,`transition-colors overflow-hidden`)}
         onClick={handleClick}
@@ -514,7 +514,7 @@ const CanvasArena = forwardRef<HTMLDivElement, CanvasArenaProps>(
           }
         }}
         style={{
-          background: 'linear-gradient(0deg,white,transparent)'
+          background: 'linear-gradient(0deg,#ffe4e4,transparent)'
         }}
         // style={{
         //   position: sticky;

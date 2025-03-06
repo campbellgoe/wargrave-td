@@ -57,7 +57,7 @@ export default function TowerPanel({ towers, onSelectTower, selectedTowerId, bud
   }
 
   return (
-    <div className="p-4 bg-card border border-border rounded-b-lg shadow-md h-[calc(50dvh-100px)] overflow-auto">
+    <div className="p-4 bg-card border border-border rounded-b-lg shadow-md h-full overflow-auto">
       {/* Search bar */}
       <div className="mb-4 relative">
         <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
