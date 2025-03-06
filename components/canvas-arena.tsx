@@ -513,6 +513,9 @@ const CanvasArena = forwardRef<HTMLDivElement, CanvasArenaProps>(
             setDraggedTower(null)
           }
         }}
+        style={{
+          background: 'linear-gradient(0deg,white,transparent)'
+        }}
         // style={{
         //   position: sticky;
         //   bottom: 0;
