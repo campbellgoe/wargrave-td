@@ -8,6 +8,7 @@ export interface Tower {
   symbol: string
   effects: string[]
   attackType: string
+  cost: number // Annual cost in GBP
 }
 
 export interface Position {

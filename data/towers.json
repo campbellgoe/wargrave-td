@@ -8,7 +8,8 @@
     "color": "#f97316",
     "symbol": "FW",
     "effects": ["block", "filter"],
-    "attackType": "area"
+    "attackType": "area",
+    "cost": 75000
   },
   "antivirus": {
     "id": "antivirus",
@@ -19,7 +20,8 @@
     "color": "#22c55e",
     "symbol": "AV",
     "effects": ["scan", "detect", "remove"],
-    "attackType": "single"
+    "attackType": "single",
+    "cost": 45000
   },
   "mfa": {
     "id": "mfa",
@@ -30,7 +32,8 @@
     "color": "#a855f7",
     "symbol": "MFA",
     "effects": ["block", "authenticate"],
-    "attackType": "single"
+    "attackType": "single",
+    "cost": 120000
   },
   "ids": {
     "id": "ids",
@@ -41,7 +44,8 @@
     "color": "#ec4899",
     "symbol": "IDS",
     "effects": ["detect", "alert"],
-    "attackType": "area"
+    "attackType": "area",
+    "cost": 95000
   },
   "ips": {
     "id": "ips",
@@ -52,7 +56,8 @@
     "color": "#d946ef",
     "symbol": "IPS",
     "effects": ["block", "prevent"],
-    "attackType": "area"
+    "attackType": "area",
+    "cost": 185000
   },
   "training": {
     "id": "training",
@@ -63,7 +68,8 @@
     "color": "#0ea5e9",
     "symbol": "SAT",
     "effects": ["prevent", "educate"],
-    "attackType": "area"
+    "attackType": "area",
+    "cost": 65000
   },
   "segmentation": {
     "id": "segmentation",
@@ -74,7 +80,8 @@
     "color": "#3b82f6",
     "symbol": "SEG",
     "effects": ["isolate", "contain"],
-    "attackType": "area"
+    "attackType": "area",
+    "cost": 210000
   },
   "encryption": {
     "id": "encryption",
@@ -85,7 +92,8 @@
     "color": "#6366f1",
     "symbol": "ENC",
     "effects": ["protect", "secure"],
-    "attackType": "single"
+    "attackType": "single",
+    "cost": 130000
   },
   "acl": {
     "id": "acl",
@@ -96,7 +104,8 @@
     "color": "#8b5cf6",
     "symbol": "ACL",
     "effects": ["restrict", "control"],
-    "attackType": "area"
+    "attackType": "area",
+    "cost": 85000
   },
   "waf": {
     "id": "waf",
@@ -107,7 +116,8 @@
     "color": "#f43f5e",
     "symbol": "WAF",
     "effects": ["filter", "sanitize"],
-    "attackType": "single"
+    "attackType": "single",
+    "cost": 110000
   },
   "passwordless": {
     "id": "passwordless",
@@ -118,7 +128,8 @@
     "color": "#14b8a6",
     "symbol": "PLA",
     "effects": ["authenticate", "verify"],
-    "attackType": "single"
+    "attackType": "single",
+    "cost": 175000
   },
   "monitoring": {
     "id": "monitoring",
@@ -129,7 +140,8 @@
     "color": "#64748b",
     "symbol": "BM",
     "effects": ["monitor", "detect"],
-    "attackType": "area"
+    "attackType": "area",
+    "cost": 140000
   },
   "updates": {
     "id": "updates",
@@ -140,7 +152,8 @@
     "color": "#0d9488",
     "symbol": "PATCH",
     "effects": ["patch", "fix"],
-    "attackType": "area"
+    "attackType": "area",
+    "cost": 90000
   },
   "vpn": {
     "id": "vpn",
@@ -151,7 +164,8 @@
     "color": "#10b981",
     "symbol": "VPN",
     "effects": ["encrypt", "tunnel"],
-    "attackType": "single"
+    "attackType": "single",
+    "cost": 125000
   },
   "backup": {
     "id": "backup",
@@ -162,7 +176,8 @@
     "color": "#fbbf24",
     "symbol": "BKP",
     "effects": ["recover", "restore"],
-    "attackType": "area"
+    "attackType": "area",
+    "cost": 160000
   },
   "ssl": {
     "id": "ssl",
@@ -173,7 +188,8 @@
     "color": "#0284c7",
     "symbol": "SSL",
     "effects": ["verify", "encrypt"],
-    "attackType": "area"
+    "attackType": "area",
+    "cost": 35000
   },
   "siem": {
     "id": "siem",
@@ -184,7 +200,8 @@
     "color": "#7c3aed",
     "symbol": "SIEM",
     "effects": ["analyze", "alert"],
-    "attackType": "area"
+    "attackType": "area",
+    "cost": 450000
   },
   "dlp": {
     "id": "dlp",
@@ -195,7 +212,8 @@
     "color": "#2563eb",
     "symbol": "DLP",
     "effects": ["monitor", "block"],
-    "attackType": "single"
+    "attackType": "single",
+    "cost": 195000
   },
   "paramquery": {
     "id": "paramquery",
@@ -206,7 +224,8 @@
     "color": "#db2777",
     "symbol": "PQ",
     "effects": ["sanitize", "validate"],
-    "attackType": "single"
+    "attackType": "single",
+    "cost": 55000
   },
   "sandbox": {
     "id": "sandbox",
@@ -217,7 +236,8 @@
     "color": "#ca8a04",
     "symbol": "SBX",
     "effects": ["isolate", "analyze"],
-    "attackType": "single"
+    "attackType": "single",
+    "cost": 180000
   },
   "edrendpoint": {
     "id": "edrendpoint",
@@ -228,7 +248,8 @@
     "color": "#15803d",
     "symbol": "EDR",
     "effects": ["detect", "respond"],
-    "attackType": "single"
+    "attackType": "single",
+    "cost": 320000
   },
   "inputvalidation": {
     "id": "inputvalidation",
@@ -239,7 +260,8 @@
     "color": "#9333ea",
     "symbol": "IV",
     "effects": ["validate", "sanitize"],
-    "attackType": "single"
+    "attackType": "single",
+    "cost": 70000
   },
   "honeypot": {
     "id": "honeypot",
@@ -250,7 +272,8 @@
     "color": "#f59e0b",
     "symbol": "HP",
     "effects": ["deceive", "detect"],
-    "attackType": "area"
+    "attackType": "area",
+    "cost": 115000
   }
 }
 

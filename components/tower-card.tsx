@@ -13,10 +13,20 @@ interface TowerCardProps {
   onClick?: () => void
   onRemove?: () => void
   style?: React.CSSProperties
+  disabled?: boolean
+  highlight?: boolean
 }
 
-// Update the component to handle selection
-export default function TowerCard({ tower, isSelected = false, onClick, onRemove, style }: TowerCardProps) {
+// Update the component to not show the remove button
+export default function TowerCard({
+  tower,
+  isSelected = false,
+  onClick,
+  onRemove,
+  style,
+  disabled = false,
+  highlight = false,
+}: TowerCardProps) {
   const [showInfo, setShowInfo] = useState(false)
 
   const handleDragStart = (e: React.DragEvent) => {
@@ -26,14 +36,16 @@ export default function TowerCard({ tower, isSelected = false, onClick, onRemove
   return (
     <div
       className={`relative flex flex-col items-center p-2 rounded-md border ${
-        onClick ? "cursor-pointer hover:bg-muted/50" : ""
-      } ${isSelected ? "ring-2 ring-primary" : ""}`}
+        onClick && !disabled ? "cursor-pointer hover:bg-muted/50" : ""
+      } ${isSelected ? "ring-2 ring-primary" : ""} ${disabled ? "opacity-50" : ""} ${
+        highlight ? "ring-2 ring-yellow-400" : ""
+      }`}
       style={{
         backgroundColor: `${tower.color}20`, // Using tower color with transparency
         borderColor: tower.color,
         ...style,
       }}
-      onClick={onClick}
+      onClick={disabled ? undefined : onClick}
     >
       <div
         className="absolute top-1 right-1 cursor-pointer"
@@ -44,18 +56,6 @@ export default function TowerCard({ tower, isSelected = false, onClick, onRemove
       >
         <Info size={16} />
       </div>
-
-      {onRemove && (
-        <button
-          className="absolute top-1 left-1 w-5 h-5 flex items-center justify-center rounded-full bg-red-500 text-white text-xs"
-          onClick={(e) => {
-            e.stopPropagation()
-            onRemove()
-          }}
-        >
-          ×
-        </button>
-      )}
 
       <div
         className="w-10 h-10 rounded-full flex items-center justify-center font-bold text-white"
@@ -75,6 +75,9 @@ export default function TowerCard({ tower, isSelected = false, onClick, onRemove
           </p>
           <p className="mb-1">
             <span className="font-semibold">Attack:</span> {tower.attackType}
+          </p>
+          <p className="mb-1">
+            <span className="font-semibold">Annual Cost:</span> £{tower.cost.toLocaleString()}
           </p>
           <p className="font-semibold">Counters:</p>
           <ul className="list-disc pl-4">

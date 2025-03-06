@@ -140,6 +140,15 @@ const Arena = forwardRef<HTMLDivElement, ArenaProps>(
         {/* Background grid for visual reference */}
         <div className="absolute inset-0 grid grid-cols-10 grid-rows-10">{gridCells}</div>
 
+        {/* Danger zone indicator */}
+        <div className="absolute bottom-0 left-0 right-0 h-1/4 bg-red-500/10 border-t-2 border-red-500 pointer-events-none">
+          <div className="flex items-center justify-center h-full">
+            <div className="bg-red-500/80 text-white px-3 py-1 rounded-md text-sm font-medium shadow-md">
+              Danger Zone - Network Breach Area
+            </div>
+          </div>
+        </div>
+
         <div className="absolute inset-0 flex items-center justify-center pointer-events-none">
           {placedTowers.length === 0 && spawnedEnemies.length === 0 && !selectedTower && (
             <p className="text-muted-foreground">Select a tower and click to place it</p>

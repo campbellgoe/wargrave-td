@@ -1,9 +1,9 @@
 "use client"
 
 import { useState, useRef, useEffect, useCallback } from "react"
-import { ChevronDown, ChevronUp, Shield, X, Bug } from "lucide-react"
+import { ChevronDown, ChevronUp, Shield, X, Bug, PoundSterlingIcon as Pound } from "lucide-react"
 import TowerPanel from "./tower-panel"
-import Arena from "./arena"
+import CanvasArena from "./canvas-arena" // Import the new canvas-based arena
 import { towerData, enemyData } from "@/data/game-data"
 import type { Tower, PlacedTower, Enemy, SpawnedEnemy } from "@/types/game-types"
 import ClientInfo from "./client-info"
@@ -18,6 +18,9 @@ import {
   isTowerEffectiveAgainstEnemy,
 } from "@/lib/game-utils"
 
+// Initial budget from client info (£5.3 million)
+const INITIAL_BUDGET = 5300000
+
 export default function TowerDefenseGame() {
   // UI state
   const [isPanelOpen, setIsPanelOpen] = useState(true)
@@ -27,11 +30,15 @@ export default function TowerDefenseGame() {
   // Game state - using Maps instead of arrays for better data structure management
   const [placedTowers, setPlacedTowers] = useState<Map<number, PlacedTower>>(new Map())
   const [spawnedEnemies, setSpawnedEnemies] = useState<Map<number, SpawnedEnemy>>(new Map())
+  const [activeEnemyTypes, setActiveEnemyTypes] = useState<string[]>([]) // Track active enemy types by ID
   const [isGameRunning, setIsGameRunning] = useState(false)
   const [networkHealth, setNetworkHealth] = useState(100)
   const [gameOver, setGameOver] = useState(false)
   const [gameOverReason, setGameOverReason] = useState<string>("")
   const [lastEnemyToBreachDefense, setLastEnemyToBreachDefense] = useState<Enemy | null>(null)
+
+  // Budget state
+  const [budget, setBudget] = useState(INITIAL_BUDGET)
 
   // Add a state for the selected tower
   const [selectedTower, setSelectedTower] = useState<Tower | null>(null)
@@ -50,6 +57,9 @@ export default function TowerDefenseGame() {
   const placedTowersRef = useRef<Map<number, PlacedTower>>(new Map())
   const spawnedEnemiesRef = useRef<Map<number, SpawnedEnemy>>(new Map())
 
+  // Add a state to track all encountered threats
+  const [encounteredEnemyTypes, setEncounteredEnemyTypes] = useState<string[]>([])
+
   // Keep refs in sync with state
   useEffect(() => {
     placedTowersRef.current = placedTowers
@@ -59,22 +69,43 @@ export default function TowerDefenseGame() {
     spawnedEnemiesRef.current = spawnedEnemies
   }, [spawnedEnemies])
 
+  // Update active enemy types whenever spawned enemies change
+  useEffect(() => {
+    const activeTypes = new Set<string>()
+    spawnedEnemies.forEach((enemy) => {
+      if (enemy.health > 0) {
+        activeTypes.add(enemy.id)
+      }
+    })
+    setActiveEnemyTypes(Array.from(activeTypes))
+  }, [spawnedEnemies])
+
   // Update dimensions when arena ref changes or on resize
   useEffect(() => {
     const updateDimensions = () => {
       if (arenaRef.current) {
+        const width = arenaRef.current.offsetWidth || 800 // Fallback width
+        const height = arenaRef.current.offsetHeight || 500 // Fallback height
+
         setDimensions({
-          width: arenaRef.current.offsetWidth,
-          height: arenaRef.current.offsetHeight,
+          width: width > 0 ? width : 800,
+          height: height > 0 ? height : 500,
         })
       }
     }
 
+    // Initial update
     updateDimensions()
+
+    // Small delay to ensure DOM is fully rendered
+    const timeoutId = setTimeout(updateDimensions, 100)
+
+    // Add resize listener
     window.addEventListener("resize", updateDimensions)
 
     return () => {
       window.removeEventListener("resize", updateDimensions)
+      clearTimeout(timeoutId)
     }
   }, [])
 
@@ -86,6 +117,13 @@ export default function TowerDefenseGame() {
   // Add a function to place the selected tower
   const handlePlaceTower = (x: number, y: number) => {
     if (selectedTower) {
+      // Check if we have enough budget
+      if (selectedTower.cost > budget) {
+        // Not enough budget - show a notification or feedback
+        console.log("Not enough budget to place this tower")
+        return
+      }
+
       const instanceId = nextTowerIdRef.current++
       const newTower = createPlacedTower(selectedTower, instanceId, x, y)
 
@@ -95,6 +133,9 @@ export default function TowerDefenseGame() {
         return updated
       })
 
+      // Deduct the cost from the budget
+      setBudget((prevBudget) => prevBudget - selectedTower.cost)
+
       // Automatically deselect the tower after placing it
       setSelectedTower(null)
     }
@@ -102,11 +143,19 @@ export default function TowerDefenseGame() {
 
   // Handle removing a tower from the arena
   const handleRemoveTower = (instanceId: number) => {
-    setPlacedTowers((prev) => {
-      const updated = new Map(prev)
-      updated.delete(instanceId)
-      return updated
-    })
+    // Get the tower before removing it to refund its cost
+    const tower = placedTowers.get(instanceId)
+
+    if (tower) {
+      setPlacedTowers((prev) => {
+        const updated = new Map(prev)
+        updated.delete(instanceId)
+        return updated
+      })
+
+      // Refund the tower cost (only used for debugging or special cases)
+      setBudget((prevBudget) => prevBudget + tower.cost)
+    }
   }
 
   // Spawn a new enemy
@@ -118,6 +167,14 @@ export default function TowerDefenseGame() {
 
     const instanceId = nextEnemyIdRef.current++
     const newEnemy = createSpawnedEnemy(enemy, instanceId)
+
+    // Add this enemy type to encountered enemies if not already there
+    setEncounteredEnemyTypes((prev) => {
+      if (!prev.includes(enemy.id)) {
+        return [...prev, enemy.id]
+      }
+      return prev
+    })
 
     setSpawnedEnemies((prev) => {
       const updated = new Map(prev)
@@ -132,7 +189,8 @@ export default function TowerDefenseGame() {
 
     const spawnLoop = () => {
       spawnEnemy()
-      spawnTimerRef.current = setTimeout(spawnLoop, 3000) // Spawn every 3 seconds
+      // Reduced spawn rate from 3 seconds to 6 seconds
+      spawnTimerRef.current = setTimeout(spawnLoop, 6000)
     }
 
     spawnLoop()
@@ -260,12 +318,48 @@ export default function TowerDefenseGame() {
             return now - (effect.startTime || 0) < effect.duration
           })
 
-          // Check if enemy reached the end based on y position (75% of arena height)
-          const hasReachedEnd = enemy.position.y >= 75 && !enemy.reachedEnd
+          // Move enemy along its path
+          let updatedPosition = { ...enemy.position }
+          const updatedPath = [...enemy.path]
 
-          // Update enemy effects
+          // If there are still points in the path, move towards the next one
+          if (updatedPath.length > 1) {
+            const targetPoint = updatedPath[1] // Next point in path
+            const dx = targetPoint.x - enemy.position.x
+            const dy = targetPoint.y - enemy.position.y
+            const distance = Math.sqrt(dx * dx + dy * dy)
+
+            // Calculate movement speed (adjust as needed)
+            let speed = 0.5 // Base speed in percentage of arena per game loop
+
+            // Apply slow effect if present
+            const slowEffect = enemy.effects?.find((effect) => effect.type === "slow")
+            if (slowEffect) {
+              speed *= slowEffect.factor || 0.5
+            }
+
+            // If we're close enough to the target point, remove it from the path
+            if (distance < speed) {
+              updatedPath.shift() // Remove the first point (current position)
+            } else {
+              // Move towards the target point
+              const moveX = (dx / distance) * speed
+              const moveY = (dy / distance) * speed
+              updatedPosition = {
+                x: enemy.position.x + moveX,
+                y: enemy.position.y + moveY,
+              }
+            }
+          }
+
+          // Check if enemy reached the end based on y position (75% of arena height - danger zone)
+          const hasReachedEnd = updatedPosition.y >= 75 && !enemy.reachedEnd
+
+          // Update enemy effects and position
           const updatedEnemy = {
             ...enemy,
+            position: updatedPosition,
+            path: updatedPath,
             effects: updatedEffects,
             reachedEnd: enemy.reachedEnd || hasReachedEnd,
           }
@@ -322,12 +416,16 @@ export default function TowerDefenseGame() {
   // Start the game
   const startGame = () => {
     if (gameOver) {
-      // Reset game
+      // Reset game and clear all towers
       setSpawnedEnemies(new Map())
+      setPlacedTowers(new Map()) // Clear all towers
       setNetworkHealth(100)
+      setBudget(INITIAL_BUDGET) // Reset budget
       setGameOver(false)
       setGameOverReason("")
       setLastEnemyToBreachDefense(null)
+      setEncounteredEnemyTypes([]) // Reset encountered threats
+      nextTowerIdRef.current = 1 // Reset tower ID counter
     }
 
     startSpawnEnemies()
@@ -379,11 +477,33 @@ export default function TowerDefenseGame() {
     })
   }
 
+  // Format currency for display
+  const formatCurrency = (amount: number) => {
+    return new Intl.NumberFormat("en-GB", {
+      style: "currency",
+      currency: "GBP",
+      maximumFractionDigits: 0,
+    }).format(amount)
+  }
+
+  // Calculate total spent on towers
+  const totalSpent = INITIAL_BUDGET - budget
+
+  // Calculate if we can afford the selected tower
+  const canAffordSelectedTower = selectedTower ? budget >= selectedTower.cost : true
+
   // Debug function to check if towers can attack enemies
   const debugTowerAttacks = () => {
     if (!isGameRunning) return null
 
-    const attacks: {tower: string; enemy: string; distance: number; range: number; health: number; effective: boolean }[] = []
+    const attacks: {
+      tower: string
+      enemy: string
+      distance: number
+      range: number
+      health: number
+      effective: boolean
+    }[] = []
 
     placedTowers.forEach((tower) => {
       spawnedEnemies.forEach((enemy) => {
@@ -454,7 +574,7 @@ export default function TowerDefenseGame() {
 
   return (
     <div className="w-full max-w-6xl flex flex-col gap-4">
-      {/* Network Health Bar */}
+      {/* Network Health and Budget Bar */}
       <div className="sticky top-0 z-50 bg-background pt-2 pb-4 border-b">
         <div className="flex items-center justify-between mb-1">
           <div className="flex items-center gap-2">
@@ -463,7 +583,7 @@ export default function TowerDefenseGame() {
           </div>
           <span className="font-bold">{networkHealth}%</span>
         </div>
-        <div className="w-full h-4 bg-gray-200 rounded-full overflow-hidden">
+        <div className="w-full h-4 bg-gray-200 rounded-full overflow-hidden mb-3">
           <div
             className={`h-full transition-all duration-300 ${
               networkHealth > 70 ? "bg-green-500" : networkHealth > 40 ? "bg-yellow-500" : "bg-red-500"
@@ -471,6 +591,40 @@ export default function TowerDefenseGame() {
             style={{ width: `${networkHealth}%` }}
           />
         </div>
+
+        {/* Budget display */}
+        <div className="flex items-center justify-between mb-1">
+          <div className="flex items-center gap-2">
+            <Pound size={20} className={budget > INITIAL_BUDGET * 0.3 ? "text-green-500" : "text-red-500"} />
+            <h3 className="font-medium">Security Budget</h3>
+          </div>
+          <div className="text-right">
+            <span className="font-bold">{formatCurrency(budget)}</span>
+            <span className="text-xs text-muted-foreground ml-1">remaining</span>
+          </div>
+        </div>
+        <div className="w-full h-4 bg-gray-200 rounded-full overflow-hidden">
+          <div
+            className={`h-full transition-all duration-300 ${
+              budget > INITIAL_BUDGET * 0.7
+                ? "bg-green-500"
+                : budget > INITIAL_BUDGET * 0.3
+                  ? "bg-yellow-500"
+                  : "bg-red-500"
+            }`}
+            style={{ width: `${(budget / INITIAL_BUDGET) * 100}%` }}
+          />
+        </div>
+
+        {/* Show warning if can't afford selected tower */}
+        {selectedTower && !canAffordSelectedTower && (
+          <div className="mt-2 text-red-500 text-sm flex items-center gap-1">
+            <X size={16} />
+            <span>
+              Cannot afford {selectedTower.name} ({formatCurrency(selectedTower.cost)})
+            </span>
+          </div>
+        )}
       </div>
 
       <ClientInfo />
@@ -480,11 +634,24 @@ export default function TowerDefenseGame() {
           className="flex items-center justify-between p-3 bg-destructive text-destructive-foreground rounded-t-lg cursor-pointer"
           onClick={() => setIsThreatInfoOpen(!isThreatInfoOpen)}
         >
-          <h2 className="text-xl font-semibold">Cyber Threats</h2>
+          <h2 className="text-xl font-semibold">
+            Cyber Threats
+            {activeEnemyTypes.length > 0 && (
+              <span className="ml-2 text-sm bg-black/30 px-2 py-0.5 rounded-full">
+                {activeEnemyTypes.length} active
+              </span>
+            )}
+          </h2>
           <button className="p-1">{isThreatInfoOpen ? <ChevronUp size={20} /> : <ChevronDown size={20} />}</button>
         </div>
 
-        {isThreatInfoOpen && <ThreatInfo threats={Object.values(enemyData)} />}
+        {isThreatInfoOpen && (
+          <ThreatInfo
+            threats={Object.values(enemyData)}
+            activeThreats={activeEnemyTypes}
+            encounteredThreats={encounteredEnemyTypes}
+          />
+        )}
       </div>
 
       <div className="flex justify-between items-center mb-2">
@@ -513,11 +680,12 @@ export default function TowerDefenseGame() {
             towers={Object.values(towerData)}
             onSelectTower={handleTowerSelect}
             selectedTowerId={selectedTower?.id || ""}
+            budget={budget}
           />
         )}
       </div>
 
-      <Arena
+      <CanvasArena
         ref={arenaRef}
         placedTowers={Array.from(placedTowers.values())}
         spawnedEnemies={Array.from(spawnedEnemies.values())}

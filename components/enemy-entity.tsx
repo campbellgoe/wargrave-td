@@ -10,6 +10,7 @@ interface EnemyEntityProps {
   onPositionUpdate?: (enemyId: number, position: { x: number; y: number }) => void
 }
 
+// Add a visual indicator when enemies enter the danger zone
 export default function EnemyEntity({ enemy, arenaWidth, arenaHeight, onPositionUpdate }: EnemyEntityProps) {
   // Use refs instead of state for position to avoid unnecessary re-renders
   const positionRef = useRef<Position>({ x: 0, y: 0 })
@@ -17,10 +18,13 @@ export default function EnemyEntity({ enemy, arenaWidth, arenaHeight, onPosition
   const moveIntervalRef = useRef<NodeJS.Timeout | null>(null)
   const enemyRef = useRef(enemy)
   const domRef = useRef<HTMLDivElement>(null)
+  const [inDangerZone, setInDangerZone] = useState(false)
 
   // Update the ref when enemy changes
   useEffect(() => {
     enemyRef.current = enemy
+    // Check if enemy is in danger zone (y >= 75%)
+    setInDangerZone(enemy.position.y >= 75)
   }, [enemy])
 
   // Set initial position
@@ -139,15 +143,16 @@ export default function EnemyEntity({ enemy, arenaWidth, arenaHeight, onPosition
   const hasBurnEffect = enemy.effects?.some((effect) => effect.type === "burn")
   const hasSlowEffect = enemy.effects?.some((effect) => effect.type === "slow")
 
+  // Update the return statement to add a danger zone indicator
   return (
     <div
       ref={domRef}
       className={`absolute flex items-center justify-center w-8 h-8 rounded-full transition-none z-20 ${
         hasSlowEffect ? "opacity-70" : "opacity-100"
-      }`}
+      } ${inDangerZone ? "animate-pulse" : ""}`}
       style={{
         backgroundColor: enemy.color,
-        boxShadow: hasBurnEffect ? `0 0 10px #f97316` : `0 0 10px ${enemy.color}`,
+        boxShadow: hasBurnEffect ? `0 0 10px #f97316` : inDangerZone ? `0 0 15px red` : `0 0 10px ${enemy.color}`,
         // Initial position set by ref in useEffect
       }}
     >
@@ -168,6 +173,13 @@ export default function EnemyEntity({ enemy, arenaWidth, arenaHeight, onPosition
       {hasSlowEffect && (
         <div className="absolute -bottom-3 right-0 w-4 h-4 rounded-full bg-blue-500 flex items-center justify-center">
           <span className="text-white text-[8px]">❄️</span>
+        </div>
+      )}
+
+      {/* Danger zone indicator */}
+      {inDangerZone && (
+        <div className="absolute -top-6 left-0 w-full flex justify-center">
+          <span className="text-xs text-red-500 font-bold bg-black/50 px-1 rounded">BREACH!</span>
         </div>
       )}
     </div>

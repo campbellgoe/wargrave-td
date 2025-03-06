@@ -11,7 +11,7 @@ export function generateRandomPath(): Position[] {
 
   // Start at a random x position at the top
   path.push({
-    x: Math.random() * 100, // percentage
+    x: 10 + Math.random() * 80, // percentage (keep away from edges)
     y: 0, // Top of the arena
   })
 
@@ -22,17 +22,18 @@ export function generateRandomPath(): Position[] {
 
     // Ensure each point is lower than the previous one
     // The y value increases more rapidly as we progress through the path
+    const yStep = 100 / pathLength // Distribute steps evenly to ensure reaching bottom
     path.push({
-      x: Math.random() * 100, // random x position
-      y: prevY + (15 + Math.random() * 15), // Ensure downward movement with some randomness
+      x: 10 + Math.random() * 80, // random x position (keep away from edges)
+      y: prevY + yStep + Math.random() * 5, // Ensure consistent downward movement
     })
   }
 
   // Ensure the last point is at the bottom
-  path.push({
-    x: Math.random() * 100,
+  path[path.length - 1] = {
+    x: 10 + Math.random() * 80, // Keep away from edges
     y: 100, // Bottom of the arena
-  })
+  }
 
   return path
 }
