@@ -1,6 +1,6 @@
 "use client"
 
-import { useState, useRef, useEffect, useCallback } from "react"
+import {  useState, useRef, useEffect, useCallback, useMemo, useContext } from "react"
 import { ChevronDown, ChevronUp, Shield, X, Bug, PoundSterlingIcon as Pound } from "lucide-react"
 import TowerPanel from "./tower-panel"
 import CanvasArena from "./canvas-arena" // Import the new canvas-based arena
@@ -17,11 +17,53 @@ import {
   calculateDamageAgainstEnemy,
   isTowerEffectiveAgainstEnemy,
 } from "@/lib/game-utils"
+import { MyAudioContext } from "@/contexts/AudioProvider"
 
 // Initial budget from client info (£5.3 million)
 const INITIAL_BUDGET = 5300000
-
+const playbackRate = 1
 export default function TowerDefenseGame() {
+  const loadedSamples = useRef<{gameover: null | AudioBuffer}>({ gameover: null })
+  const { audioContext } = useContext(MyAudioContext)
+  const playSample = useCallback((audioContext: AudioContext, audioBuffer: AudioBuffer, time: number) => {
+    const sampleSource = new AudioBufferSourceNode(audioContext, {
+      buffer: audioBuffer,
+      playbackRate,
+    });
+    sampleSource.connect(audioContext.destination);
+    sampleSource.start(time);
+    return sampleSource;
+  }, [])
+  useEffect(() => {
+    // preload sound(s)
+    
+    if(audioContext){
+    async function getFile(audioContext: AudioContext, filepath: string) {
+      const response = await fetch(filepath);
+      const arrayBuffer = await response.arrayBuffer();
+      const audioBuffer = await audioContext.decodeAudioData(arrayBuffer);
+      return audioBuffer;
+    }
+    async function setupSamples(filePaths: string[], audioContext: AudioContext) {
+      const samples = await Promise.allSettled(filePaths.map(filePath => getFile(audioContext, filePath)));
+      return samples;
+    }
+      setupSamples(["virus-game-over.wav"], audioContext).then(samples => {
+        console.log('samples:', samples)
+        try {
+        const [gameOverSound] = samples;
+        if(gameOverSound.status === 'fulfilled'){
+          console.log('game over sound:', gameOverSound.value)
+          loadedSamples.current.gameover = gameOverSound.value
+        } else {
+          console.warn("couldn't fulfil proise to load sound.", gameOverSound)
+        }
+        } catch(err){
+          console.warn("Couldn't load sound.", err)
+        }
+      })
+    }
+  }, [audioContext, playSample])
   // UI state
   const [isPanelOpen, setIsPanelOpen] = useState(true)
   const [isThreatInfoOpen, setIsThreatInfoOpen] = useState(false)
@@ -373,6 +415,8 @@ export default function TowerDefenseGame() {
 
               // Check for game over
               if (newHealth <= 0) {
+                console.log('GAME OVER', loadedSamples.current.gameover, audioContext)
+                if(loadedSamples.current.gameover && audioContext) playSample(audioContext, loadedSamples.current.gameover, 0)
                 setGameOver(true)
                 setGameOverReason(`Your network was breached by a ${updatedEnemy.name}`)
                 setLastEnemyToBreachDefense(updatedEnemy)
@@ -390,7 +434,7 @@ export default function TowerDefenseGame() {
         return updatedEnemies
       })
 
-      gameLoopRef.current = setTimeout(gameLoop, 100) // Run game loop every 100ms
+      gameLoopRef.current = setTimeout(gameLoop, 150) // Run game loop every 100ms
     }
 
     gameLoop()
