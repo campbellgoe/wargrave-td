@@ -25,13 +25,17 @@ const playbackRate = 1
 export default function TowerDefenseGame() {
   const loadedSamples = useRef<{gameover: null | AudioBuffer}>({ gameover: null })
   const { audioContext } = useContext(MyAudioContext)
-  const playSample = useCallback((audioContext: AudioContext, audioBuffer: AudioBuffer, time: number) => {
+  const playSample = useCallback((audioContext: AudioContext, audioBuffer: AudioBuffer, startTime: number = 0, volume: number = 0.5) => {
     const sampleSource = new AudioBufferSourceNode(audioContext, {
       buffer: audioBuffer,
       playbackRate,
     });
-    sampleSource.connect(audioContext.destination);
-    sampleSource.start(time);
+    var gainNode = audioContext.createGain()
+    gainNode.gain.value = volume; // 10 %
+    gainNode.connect(audioContext.destination)
+
+    sampleSource.connect(gainNode);
+    sampleSource.start(startTime);
     return sampleSource;
   }, [])
   useEffect(() => {
@@ -49,14 +53,12 @@ export default function TowerDefenseGame() {
       return samples;
     }
       setupSamples(["virus-game-over.wav"], audioContext).then(samples => {
-        console.log('samples:', samples)
         try {
         const [gameOverSound] = samples;
         if(gameOverSound.status === 'fulfilled'){
-          console.log('game over sound:', gameOverSound.value)
           loadedSamples.current.gameover = gameOverSound.value
         } else {
-          console.warn("couldn't fulfil proise to load sound.", gameOverSound)
+          console.warn("Couldn't load sound.")
         }
         } catch(err){
           console.warn("Couldn't load sound.", err)
@@ -415,8 +417,8 @@ export default function TowerDefenseGame() {
 
               // Check for game over
               if (newHealth <= 0) {
-                console.log('GAME OVER', loadedSamples.current.gameover, audioContext)
-                if(loadedSamples.current.gameover && audioContext) playSample(audioContext, loadedSamples.current.gameover, 0)
+                console.log('GAME OVER')
+                if(loadedSamples.current.gameover && audioContext) playSample(audioContext, loadedSamples.current.gameover, 0, 0.128)
                 setGameOver(true)
                 setGameOverReason(`Your network was breached by a ${updatedEnemy.name}`)
                 setLastEnemyToBreachDefense(updatedEnemy)
@@ -698,7 +700,7 @@ export default function TowerDefenseGame() {
         )}
       </div>
 
-      <div className="sticky top-32 z-50 flex justify-between items-center mb-2">
+      <div className="mx-auto sticky top-32 z-50 flex justify-between items-center mb-2">
         <button
           onClick={toggleGame}
           className={`px-4 py-2 rounded-md ${
