@@ -69,6 +69,7 @@ export default function TowerDefenseGame() {
   // UI state
   const [isPanelOpen, setIsPanelOpen] = useState(true)
   const [isThreatInfoOpen, setIsThreatInfoOpen] = useState(false)
+  const [threatInfoNeverOpened, setThreatInfoNeverOpened] = useState(true)
   const [isDebugPanelMinimized, setIsDebugPanelMinimized] = useState(false)
 
   // Game state - using Maps instead of arrays for better data structure management
@@ -129,7 +130,7 @@ export default function TowerDefenseGame() {
     const updateDimensions = () => {
       if (arenaRef.current) {
         const width = arenaRef.current.offsetWidth || 800 // Fallback width
-        const height = arenaRef.current.offsetHeight || 500 // Fallback height
+        const height = arenaRef.current.offsetHeight || 400 // Fallback height
 
         setDimensions({
           width: width > 0 ? width : 800,
@@ -225,6 +226,10 @@ export default function TowerDefenseGame() {
       updated.set(instanceId, newEnemy)
       return updated
     })
+    if(threatInfoNeverOpened) {
+      setIsThreatInfoOpen(true)
+      setThreatInfoNeverOpened(false)
+    }
   }
 
   // Start spawning enemies
@@ -678,7 +683,7 @@ export default function TowerDefenseGame() {
       <div className="w-full">
         <div
           className="flex items-center justify-between p-3 bg-destructive text-destructive-foreground rounded-t-lg cursor-pointer"
-          onClick={() => setIsThreatInfoOpen(!isThreatInfoOpen)}
+          onClick={() => setIsThreatInfoOpen(isThreatInfoOpen => !isThreatInfoOpen)}
         >
           <h2 className="text-xl font-semibold">
             Cyber Threats

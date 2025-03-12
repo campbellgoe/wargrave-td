@@ -494,12 +494,11 @@ const CanvasArena = forwardRef<HTMLDivElement, CanvasArenaProps>(
         }
       }
     }, [dimensions, drawCanvasCallback])
-
     // Update the return JSX to handle drag events
     return (
       <div
         ref={ref}
-        className={cn(`sticky bottom-0 max-h-[60vh] bg-linear-to-t from-[#ffe4e4] to-transparent backdrop-blur-[2px] w-full h-[500px] border-2 rounded-lg`,
+        className={cn(`sticky bottom-0 max-h-[60vh] bg-linear-to-t from-[#ffe4e4] to-transparent backdrop-blur-[2px] w-full h-[400px] border-2 rounded-lg`,
           selectedTower ? "border-primary cursor-crosshair" : "border-border"
         ,`transition-colors overflow-hidden`)}
         onClick={handleClick}
