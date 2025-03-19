@@ -1,7 +1,16 @@
 "use client"
 
-import {  useState, useRef, useEffect, useCallback, useMemo, useContext } from "react"
-import { ChevronDown, ChevronUp, Shield, X, Bug, PoundSterlingIcon as Pound } from "lucide-react"
+import { useState, useRef, useEffect, useCallback, useContext } from "react"
+import {
+  ChevronDown,
+  ChevronUp,
+  Shield,
+  X,
+  Bug,
+  PoundSterlingIcon as Pound,
+  ChevronLeft,
+  ChevronRight,
+} from "lucide-react"
 import TowerPanel from "./tower-panel"
 import CanvasArena from "./canvas-arena" // Import the new canvas-based arena
 import { towerData, enemyData } from "@/data/game-data"
@@ -13,62 +22,81 @@ import {
   createSpawnedEnemy,
   createPlacedTower,
   createEffect,
-  calculateEnemyDamage,
+  calculateSpawnedEnemyDamage as calculateEnemyDamage,
   calculateDamageAgainstEnemy,
   isTowerEffectiveAgainstEnemy,
 } from "@/lib/game-utils"
 import { MyAudioContext } from "@/contexts/AudioProvider"
 
-// Initial budget from client info (£5.3 million)
-const INITIAL_BUDGET = 5300000
+// Change the initial budget from 5.3 million to 1 million to make it more challenging
+const INITIAL_BUDGET = 1000000
+
+// Add a function to calculate rewards based on enemy severity
+const calculateReward = (severity: string): number => {
+  switch (severity) {
+    case "Extreme":
+      return 75000
+    case "High":
+      return 45000
+    case "Medium":
+      return 25000
+    default:
+      return 15000
+  }
+}
+
 const playbackRate = 1
 export default function TowerDefenseGame() {
-  const loadedSamples = useRef<{gameover: null | AudioBuffer}>({ gameover: null })
+  const loadedSamples = useRef<{ gameover: null | AudioBuffer }>({ gameover: null })
   const { audioContext } = useContext(MyAudioContext)
-  const playSample = useCallback((audioContext: AudioContext, audioBuffer: AudioBuffer, startTime: number = 0, volume: number = 0.5) => {
-    const sampleSource = new AudioBufferSourceNode(audioContext, {
-      buffer: audioBuffer,
-      playbackRate,
-    });
-    var gainNode = audioContext.createGain()
-    gainNode.gain.value = volume; // 10 %
-    gainNode.connect(audioContext.destination)
+  const playSample = useCallback(
+    (audioContext: AudioContext, audioBuffer: AudioBuffer, startTime = 0, volume = 0.5) => {
+      const sampleSource = new AudioBufferSourceNode(audioContext, {
+        buffer: audioBuffer,
+        playbackRate,
+      })
+      var gainNode = audioContext.createGain()
+      gainNode.gain.value = volume // 10 %
+      gainNode.connect(audioContext.destination)
 
-    sampleSource.connect(gainNode);
-    sampleSource.start(startTime);
-    return sampleSource;
-  }, [])
+      sampleSource.connect(gainNode)
+      sampleSource.start(startTime)
+      return sampleSource
+    },
+    [],
+  )
   useEffect(() => {
     // preload sound(s)
-    
-    if(audioContext){
-    async function getFile(audioContext: AudioContext, filepath: string) {
-      const response = await fetch(filepath);
-      const arrayBuffer = await response.arrayBuffer();
-      const audioBuffer = await audioContext.decodeAudioData(arrayBuffer);
-      return audioBuffer;
-    }
-    async function setupSamples(filePaths: string[], audioContext: AudioContext) {
-      const samples = await Promise.allSettled(filePaths.map(filePath => getFile(audioContext, filePath)));
-      return samples;
-    }
-      setupSamples(["virus-game-over.wav"], audioContext).then(samples => {
+
+    if (audioContext) {
+      async function getFile(audioContext: AudioContext, filepath: string) {
+        const response = await fetch(filepath)
+        const arrayBuffer = await response.arrayBuffer()
+        const audioBuffer = await audioContext.decodeAudioData(arrayBuffer)
+        return audioBuffer
+      }
+      async function setupSamples(filePaths: string[], audioContext: AudioContext) {
+        const samples = await Promise.allSettled(filePaths.map((filePath) => getFile(audioContext, filePath)))
+        return samples
+      }
+      setupSamples(["virus-game-over.wav"], audioContext).then((samples) => {
         try {
-        const [gameOverSound] = samples;
-        if(gameOverSound.status === 'fulfilled'){
-          loadedSamples.current.gameover = gameOverSound.value
-        } else {
-          console.warn("Couldn't load sound.")
-        }
-        } catch(err){
+          const [gameOverSound] = samples
+          if (gameOverSound.status === "fulfilled") {
+            loadedSamples.current.gameover = gameOverSound.value
+          } else {
+            console.warn("Couldn't load sound.")
+          }
+        } catch (err) {
           console.warn("Couldn't load sound.", err)
         }
       })
     }
   }, [audioContext, playSample])
+
   // UI state
-  const [isPanelOpen, setIsPanelOpen] = useState(true)
-  const [isThreatInfoOpen, setIsThreatInfoOpen] = useState(false)
+  const [isThreatPanelOpen, setIsThreatPanelOpen] = useState(true)
+  const [isTowerPanelOpen, setIsTowerPanelOpen] = useState(true)
   const [threatInfoNeverOpened, setThreatInfoNeverOpened] = useState(true)
   const [isDebugPanelMinimized, setIsDebugPanelMinimized] = useState(false)
 
@@ -104,6 +132,11 @@ export default function TowerDefenseGame() {
 
   // Add a state to track all encountered threats
   const [encounteredEnemyTypes, setEncounteredEnemyTypes] = useState<string[]>([])
+
+  // Add a state to track reward notifications
+  const [rewardNotifications, setRewardNotifications] = useState<
+    { amount: number; timestamp: number; enemyName: string; enemyColor: string }[]
+  >([])
 
   // Keep refs in sync with state
   useEffect(() => {
@@ -226,8 +259,8 @@ export default function TowerDefenseGame() {
       updated.set(instanceId, newEnemy)
       return updated
     })
-    if(threatInfoNeverOpened) {
-      setIsThreatInfoOpen(true)
+    if (threatInfoNeverOpened) {
+      setIsThreatPanelOpen(true)
       setThreatInfoNeverOpened(false)
     }
   }
@@ -253,9 +286,22 @@ export default function TowerDefenseGame() {
     }
   }, [])
 
-  // Start the game loop
+  // Add a reward notification system to show when money is earned
+  // First, add a new state for reward notifications
+  // Then add a function to add a new reward notification
   const startGameLoop = () => {
     if (gameLoopRef.current) return // Already running
+
+    // Then add a function to add a new reward notification
+    const addRewardNotification = (amount: number, enemyName: string, enemyColor: string) => {
+      const id = Date.now()
+      setRewardNotifications((prev) => [...prev, { amount, timestamp: id, enemyName, enemyColor }])
+
+      // Remove notification after 3 seconds automatically
+      setTimeout(() => {
+        setRewardNotifications((prev) => prev.filter((n) => n.timestamp !== id))
+      }, 3000)
+    }
 
     const gameLoop = () => {
       // Process tower attacks
@@ -326,12 +372,41 @@ export default function TowerDefenseGame() {
                 updatedEffects.push(createEffect("scan", 4000, { factor: 1.5 }))
               }
 
+              // Check if enemy was just defeated (health went from positive to zero)
+              const wasJustDefeated = enemy.health > 0 && enemy.health - damage <= 0
+
               // Update the enemy with new health and effects
               updatedEnemies.set(enemyId, {
                 ...enemy,
                 health: Math.max(0, enemy.health - damage),
                 effects: updatedEffects,
               })
+
+              // If enemy was just defeated, reward the player with money
+              if (wasJustDefeated) {
+                // Calculate reward based on enemy severity
+                let reward = 0
+                switch (enemy.severity) {
+                  case "Extreme":
+                    reward = 75000
+                    break
+                  case "High":
+                    reward = 45000
+                    break
+                  case "Medium":
+                    reward = 25000
+                    break
+                  default:
+                    reward = 15000
+                }
+
+                // Add the reward to the budget
+                setBudget((prevBudget) => prevBudget + reward)
+
+                // Show a visual notification of the reward (optional)
+                // This would require adding a notification system
+                addRewardNotification(reward, enemy.name, enemy.color)
+              }
             })
 
             return updatedEnemies
@@ -352,8 +427,8 @@ export default function TowerDefenseGame() {
 
         // Process each enemy
         currentEnemies.forEach((enemy, enemyId) => {
-          // Remove defeated enemies
-          if (enemy.health <= 0) return
+          // Check if enemy was alive before and is now defeated by effects
+          const wasAlive = enemy.health > 0
 
           // Process effects
           const now = Date.now()
@@ -366,6 +441,17 @@ export default function TowerDefenseGame() {
             // Keep effect if duration hasn't expired
             return now - (effect.startTime || 0) < effect.duration
           })
+
+          // If enemy was just defeated by effects, reward the player
+          if (wasAlive && enemy.health <= 0) {
+            // Add reward to budget
+            const reward = calculateReward(enemy.severity)
+            setBudget((prevBudget) => prevBudget + reward)
+            addRewardNotification(reward, enemy.name, enemy.color)
+          }
+
+          // Remove defeated enemies
+          if (enemy.health <= 0) return
 
           // Move enemy along its path
           let updatedPosition = { ...enemy.position }
@@ -422,8 +508,9 @@ export default function TowerDefenseGame() {
 
               // Check for game over
               if (newHealth <= 0) {
-                console.log('GAME OVER')
-                if(loadedSamples.current.gameover && audioContext) playSample(audioContext, loadedSamples.current.gameover, 0, 0.128)
+                console.log("GAME OVER")
+                if (loadedSamples.current.gameover && audioContext)
+                  playSample(audioContext, loadedSamples.current.gameover, 0, 0.128)
                 setGameOver(true)
                 setGameOverReason(`Your network was breached by a ${updatedEnemy.name}`)
                 setLastEnemyToBreachDefense(updatedEnemy)
@@ -477,6 +564,7 @@ export default function TowerDefenseGame() {
       setLastEnemyToBreachDefense(null)
       setEncounteredEnemyTypes([]) // Reset encountered threats
       nextTowerIdRef.current = 1 // Reset tower ID counter
+      setRewardNotifications([])
     }
 
     startSpawnEnemies()
@@ -624,7 +712,7 @@ export default function TowerDefenseGame() {
   }
 
   return (
-    <div className="w-full max-w-6xl flex flex-col gap-4">
+    <div className="w-full max-w-screen">
       {/* Network Health and Budget Bar */}
       <div className="sticky top-0 z-50 bg-background pt-2 pb-4 border-b">
         <div className="flex items-center justify-between mb-1">
@@ -680,32 +768,8 @@ export default function TowerDefenseGame() {
 
       <ClientInfo />
 
-      <div className="w-full">
-        <div
-          className="flex items-center justify-between p-3 bg-destructive text-destructive-foreground rounded-t-lg cursor-pointer"
-          onClick={() => setIsThreatInfoOpen(isThreatInfoOpen => !isThreatInfoOpen)}
-        >
-          <h2 className="text-xl font-semibold">
-            Cyber Threats
-            {activeEnemyTypes.length > 0 && (
-              <span className="ml-2 text-sm bg-black/30 px-2 py-0.5 rounded-full">
-                {activeEnemyTypes.length} active
-              </span>
-            )}
-          </h2>
-          <button className="p-1">{isThreatInfoOpen ? <ChevronUp size={20} /> : <ChevronDown size={20} />}</button>
-        </div>
-
-        {isThreatInfoOpen && (
-          <ThreatInfo
-            threats={Object.values(enemyData)}
-            activeThreats={activeEnemyTypes}
-            encounteredThreats={encounteredEnemyTypes}
-          />
-        )}
-      </div>
-
-      <div className="mx-auto sticky top-32 z-50 flex justify-between items-center mb-2">
+      {/* Game control button */}
+      <div className="mx-auto flex justify-center items-center my-4">
         <button
           onClick={toggleGame}
           className={`px-4 py-2 rounded-md ${
@@ -716,39 +780,148 @@ export default function TowerDefenseGame() {
         </button>
       </div>
 
-      <div className="w-full mb-4">
+      {/* Main game layout with side panels */}
+      <div className="flex flex-row h-[calc(100vh-300px)] min-h-[500px]">
+        {/* Left panel - Threats */}
         <div
-          className="flex items-center justify-between p-3 bg-primary text-primary-foreground rounded-t-lg cursor-pointer"
-          onClick={() => setIsPanelOpen(!isPanelOpen)}
+          className={`bg-card border-r border-border transition-all duration-300 flex flex-col ${
+            isThreatPanelOpen ? "w-1/4 min-w-[250px]" : "w-[40px]"
+          }`}
         >
-          <h2 className="text-xl font-semibold">Defense Towers</h2>
-          <button className="p-1">{isPanelOpen ? <ChevronUp size={20} /> : <ChevronDown size={20} />}</button>
+          <div
+            className={`flex items-center justify-between p-3 bg-destructive text-destructive-foreground cursor-pointer ${
+              isThreatPanelOpen ? "flex-row" : "flex-col h-auto"
+            }`}
+            onClick={() => setIsThreatPanelOpen(!isThreatPanelOpen)}
+          >
+            {isThreatPanelOpen ? (
+              <>
+                <h2 className="text-xl font-semibold">
+                  Cyber Threats
+                  {activeEnemyTypes.length > 0 && (
+                    <span className="ml-2 text-sm bg-black/30 px-2 py-0.5 rounded-full">
+                      {activeEnemyTypes.length} active
+                    </span>
+                  )}
+                </h2>
+                <ChevronLeft size={20} />
+              </>
+            ) : (
+              <>
+                <span className="rotate-90 whitespace-nowrap text-xs font-medium">Cyber Threats</span>
+                <ChevronRight size={20} className="mt-2" />
+              </>
+            )}
+          </div>
+
+          {isThreatPanelOpen && (
+            <div className="flex-1 overflow-auto">
+              <ThreatInfo
+                threats={Object.values(enemyData)}
+                activeThreats={activeEnemyTypes}
+                encounteredThreats={encounteredEnemyTypes}
+              />
+            </div>
+          )}
         </div>
 
-        {isPanelOpen && (
-          <TowerPanel
-            towers={Object.values(towerData)}
-            onSelectTower={handleTowerSelect}
-            selectedTowerId={selectedTower?.id || ""}
-            budget={budget}
+        {/* Center - Game Arena */}
+        <div className="flex-1 flex flex-col items-center justify-center p-4">
+          <CanvasArena
+            ref={arenaRef}
+            placedTowers={Array.from(placedTowers.values())}
+            spawnedEnemies={Array.from(spawnedEnemies.values())}
+            onPlaceTower={handlePlaceTower}
+            onRemoveTower={handleRemoveTower}
+            selectedTower={selectedTower}
+            onDeselectTower={() => setSelectedTower(null)}
+            dimensions={dimensions}
+            onEnemyPositionUpdate={handleEnemyPositionUpdate}
           />
-        )}
-      </div>
+        </div>
 
-      <CanvasArena
-        ref={arenaRef}
-        placedTowers={Array.from(placedTowers.values())}
-        spawnedEnemies={Array.from(spawnedEnemies.values())}
-        onPlaceTower={handlePlaceTower}
-        onRemoveTower={handleRemoveTower}
-        selectedTower={selectedTower}
-        onDeselectTower={() => setSelectedTower(null)}
-        dimensions={dimensions}
-        onEnemyPositionUpdate={handleEnemyPositionUpdate}
-      />
+        {/* Right panel - Towers */}
+        <div
+          className={`bg-card border-l border-border transition-all duration-300 flex flex-col ${
+            isTowerPanelOpen ? "w-1/4 min-w-[250px]" : "w-[40px]"
+          }`}
+        >
+          <div
+            className={`flex items-center justify-between p-3 bg-primary text-primary-foreground cursor-pointer ${
+              isTowerPanelOpen ? "flex-row" : "flex-col h-auto"
+            }`}
+            onClick={() => setIsTowerPanelOpen(!isTowerPanelOpen)}
+          >
+            {isTowerPanelOpen ? (
+              <>
+                <h2 className="text-xl font-semibold">Defense Towers</h2>
+                <ChevronRight size={20} />
+              </>
+            ) : (
+              <>
+                <span className="rotate-90 whitespace-nowrap text-xs font-medium">Defense Towers</span>
+                <ChevronLeft size={20} className="mt-2" />
+              </>
+            )}
+          </div>
+
+          {isTowerPanelOpen && (
+            <div className="flex-1 overflow-auto">
+              <TowerPanel
+                towers={Object.values(towerData)}
+                onSelectTower={handleTowerSelect}
+                selectedTowerId={selectedTower?.id || ""}
+                budget={budget}
+              />
+            </div>
+          )}
+        </div>
+      </div>
 
       {gameOver && <GameOver reason={gameOverReason} enemy={lastEnemyToBreachDefense} onRestart={startGame} />}
       {debugTowerAttacks()}
+      {rewardNotifications.map((notification, index) => (
+        <div
+          key={notification.timestamp + index}
+          className="fixed z-50 animate-bounce cursor-pointer transition-opacity hover:opacity-70"
+          style={{
+            bottom: `${50 + index * 40}px`,
+            right: "20px",
+            backgroundColor: notification.enemyColor,
+            color: "white",
+            padding: "8px 12px",
+            borderRadius: "8px",
+            boxShadow: "0 4px 6px rgba(0, 0, 0, 0.1)",
+            opacity: 0.9,
+          }}
+          onClick={() => {
+            // Remove this notification when clicked
+            setRewardNotifications((prev) => prev.filter((n) => n.timestamp !== notification.timestamp))
+          }}
+          onMouseEnter={(e) => {
+            // Add a data attribute to track hover start time
+            e.currentTarget.setAttribute("data-hover-start", Date.now().toString())
+
+            // Set a timeout to dismiss after hovering for 1 second
+            const hoverTimeout = setTimeout(() => {
+              setRewardNotifications((prev) => prev.filter((n) => n.timestamp !== notification.timestamp))
+            }, 1000)
+
+            // Store the timeout ID as a data attribute
+            e.currentTarget.setAttribute("data-timeout-id", hoverTimeout.toString())
+          }}
+          onMouseLeave={(e) => {
+            // Clear the timeout when mouse leaves
+            const timeoutId = e.currentTarget.getAttribute("data-timeout-id")
+            if (timeoutId) {
+              clearTimeout(Number.parseInt(timeoutId))
+            }
+          }}
+        >
+          <div className="font-bold">+{formatCurrency(notification.amount)}</div>
+          <div className="text-xs">Defeated {notification.enemyName}</div>
+        </div>
+      ))}
     </div>
   )
 }

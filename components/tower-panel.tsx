@@ -57,7 +57,7 @@ export default function TowerPanel({ towers, onSelectTower, selectedTowerId, bud
   }
 
   return (
-    <div className="p-4 bg-card border border-border rounded-b-lg shadow-md h-full overflow-auto">
+    <div className="p-4 bg-card h-full overflow-auto">
       {/* Search bar */}
       <div className="mb-4 relative">
         <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
@@ -95,7 +95,7 @@ export default function TowerPanel({ towers, onSelectTower, selectedTowerId, bud
       )}
 
       {/* Tower grid */}
-      <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-3">
+      <div className="grid grid-cols-1 gap-3">
         {filteredTowers.map((tower) => {
           const canAfford = budget >= tower.cost
 

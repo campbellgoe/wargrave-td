@@ -12,7 +12,7 @@ importers:
         specifier: ^2.1.1
         version: 2.1.1
       fuse.js:
-        specifier: ^7.0.0
+        specifier: ^7.1.0
         version: 7.1.0
       lucide-react:
         specifier: ^0.477.0

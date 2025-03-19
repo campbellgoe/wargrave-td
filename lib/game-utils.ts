@@ -211,7 +211,7 @@ export function createEffect(type: string, duration: number, options: Partial<Ef
 /**
  * Calculates damage based on enemy severity
  */
-export function calculateEnemyDamage(severity: string): number {
+export function calculateSpawnedEnemyDamage(severity: string): number {
   switch (severity) {
     case "Extreme":
       return 25

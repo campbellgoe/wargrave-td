@@ -37,12 +37,27 @@ export default function SecurityPresentation() {
               <div className="p-4 space-y-4 border border-yellow-300 rounded-md bg-yellow-50">
                 <p>Key security risks identified at Wargrave College:</p>
                 <ul className="list-disc list-inside">
-                  <li><strong>Unauthorized Access:</strong> Weak authentication methods allow unauthorized access to sensitive data.</li>
-                  <li><strong>Malware & Viruses:</strong> Lack of robust endpoint security can lead to infection.</li>
-                  <li><strong>DDoS Attacks:</strong> Disruptions caused by network overload due to malicious traffic.</li>
-                  <li><strong>Incorrect Firewall Configurations:</strong> Misconfigured firewall policies can expose internal systems.</li>
-                  <li><strong>Weak VPN Security:</strong> Third-party VPN clients may introduce security vulnerabilities.</li>
-                  <li><strong>Insufficient Network Monitoring:</strong> Lack of monitoring tools increases the risk of undetected attacks.</li>
+                  <li>
+                    <strong>Unauthorized Access:</strong> Weak authentication methods allow unauthorized access to
+                    sensitive data.
+                  </li>
+                  <li>
+                    <strong>Malware & Viruses:</strong> Lack of robust endpoint security can lead to infection.
+                  </li>
+                  <li>
+                    <strong>DDoS Attacks:</strong> Disruptions caused by network overload due to malicious traffic.
+                  </li>
+                  <li>
+                    <strong>Incorrect Firewall Configurations:</strong> Misconfigured firewall policies can expose
+                    internal systems.
+                  </li>
+                  <li>
+                    <strong>Weak VPN Security:</strong> Third-party VPN clients may introduce security vulnerabilities.
+                  </li>
+                  <li>
+                    <strong>Insufficient Network Monitoring:</strong> Lack of monitoring tools increases the risk of
+                    undetected attacks.
+                  </li>
                 </ul>
               </div>
             )}
@@ -66,31 +81,40 @@ export default function SecurityPresentation() {
                 <p>To mitigate these risks, Wargrave College should implement the following measures:</p>
                 <ul className="list-disc list-inside">
                   <li>
-                    <strong>ISO 27001 Compliance:</strong> Implement an Information Security Management System (ISMS) to protect confidentiality, integrity, and availability of information.
+                    <strong>ISO 27001 Compliance:</strong> Implement an Information Security Management System (ISMS) to
+                    protect confidentiality, integrity, and availability of information.
                   </li>
                   <li>
-                    <strong>Network Monitoring:</strong> Deploy Intrusion Detection/Prevention Systems (IDS/IPS) to detect and respond to threats in real time.
+                    <strong>Network Monitoring:</strong> Deploy Intrusion Detection/Prevention Systems (IDS/IPS) to
+                    detect and respond to threats in real time.
                   </li>
                   <li>
-                    <strong>Firewall Best Practices:</strong> Ensure firewalls are configured to block unauthorized traffic while allowing essential communications.
+                    <strong>Firewall Best Practices:</strong> Ensure firewalls are configured to block unauthorized
+                    traffic while allowing essential communications.
                   </li>
                   <li>
-                    <strong>Secure VPN:</strong> Use open-source VPN solutions like OpenVPN with strong authentication protocols.
+                    <strong>Secure VPN:</strong> Use open-source VPN solutions like OpenVPN with strong authentication
+                    protocols.
                   </li>
                   <li>
-                    <strong>De-Militarized Zone (DMZ):</strong> Segment public-facing services from internal systems to reduce attack surface.
+                    <strong>De-Militarized Zone (DMZ):</strong> Segment public-facing services from internal systems to
+                    reduce attack surface.
                   </li>
                   <li>
-                    <strong>Static IP & NAT:</strong> Improve control over inbound/outbound traffic by using Static IPs and Network Address Translation (NAT).
+                    <strong>Static IP & NAT:</strong> Improve control over inbound/outbound traffic by using Static IPs
+                    and Network Address Translation (NAT).
                   </li>
                   <li>
-                    <strong>Data Encryption:</strong> Encrypt sensitive data at rest and in transit to prevent unauthorized access.
+                    <strong>Data Encryption:</strong> Encrypt sensitive data at rest and in transit to prevent
+                    unauthorized access.
                   </li>
                   <li>
-                    <strong>Security Awareness Training:</strong> Educate staff and students on security best practices and phishing attack prevention.
+                    <strong>Security Awareness Training:</strong> Educate staff and students on security best practices
+                    and phishing attack prevention.
                   </li>
                   <li>
-                    <strong>Access Control:</strong> Implement strong authentication mechanisms such as multi-factor authentication (MFA) and role-based access control (RBAC).
+                    <strong>Access Control:</strong> Implement strong authentication mechanisms such as multi-factor
+                    authentication (MFA) and role-based access control (RBAC).
                   </li>
                 </ul>
               </div>
@@ -131,8 +155,8 @@ export default function SecurityPresentation() {
               including proactive monitoring, strict access controls, and continuous staff training.
             </p>
             <p>
-              Adopting an ISMS and working towards ISO 27001 compliance will provide a structured security
-              framework ensuring data protection and operational integrity.
+              Adopting an ISMS and working towards ISO 27001 compliance will provide a structured security framework
+              ensuring data protection and operational integrity.
             </p>
           </section>
         </div>
@@ -140,3 +164,4 @@ export default function SecurityPresentation() {
     </div>
   )
 }
+

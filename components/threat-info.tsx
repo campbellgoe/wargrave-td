@@ -65,7 +65,7 @@ export default function ThreatInfo({ threats, activeThreats, encounteredThreats 
   }
 
   return (
-    <div className="p-4 bg-card border border-border rounded-b-lg shadow-md h-full overflow-auto">
+    <div className="p-4 bg-card h-full overflow-auto">
       {/* Add view mode toggle buttons after the search bar */}
       <div className="mb-4 flex flex-col gap-2">
         <div className="relative">
@@ -172,7 +172,7 @@ export default function ThreatInfo({ threats, activeThreats, encounteredThreats 
       )}
 
       {/* Threat cards */}
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+      <div className="grid grid-cols-1 gap-4">
         {/* Add a visual indicator for active vs collected threats */}
         {filteredThreats.map((threat) => {
           const counterTowers = getCounterTowers(threat)
@@ -224,7 +224,7 @@ export default function ThreatInfo({ threats, activeThreats, encounteredThreats 
 
                 <div>
                   <h4 className="text-xs font-semibold uppercase text-muted-foreground">Required Defenses</h4>
-                  <div className="mt-1 grid grid-cols-2 gap-1">
+                  <div className="mt-1 grid grid-cols-1 gap-1">
                     {counterTowers.map((tower) => (
                       <div key={tower.id} className="flex items-center gap-2 text-sm">
                         <div

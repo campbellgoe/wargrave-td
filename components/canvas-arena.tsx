@@ -1,6 +1,6 @@
 "use client"
 
-import React from "react"
+import type React from "react"
 
 import { useRef, useEffect, useState, forwardRef, useCallback } from "react"
 import type { PlacedTower, Tower, SpawnedEnemy } from "@/types/game-types"
@@ -68,7 +68,7 @@ const CanvasArena = forwardRef<HTMLDivElement, CanvasArenaProps>(
     }
 
     // Add these handlers for drag and drop
-    const handleTowerDragStart = (isTouch: boolean)=>(e: React.MouseEvent | React.TouchEvent, tower: PlacedTower) => {
+    const handleTowerDragStart = (isTouch: boolean) => (e: React.MouseEvent | React.TouchEvent, tower: PlacedTower) => {
       if (selectedTower) return // Don't allow dragging while placing a tower
 
       e.stopPropagation()
@@ -88,11 +88,11 @@ const CanvasArena = forwardRef<HTMLDivElement, CanvasArenaProps>(
       e.stopPropagation()
 
       const arenaRect = ref.current.getBoundingClientRect()
-      let x = 0;
-      let y = 0;
-      if(isTouch){
-        x = ((e as unknown as TouchEvent).changedTouches?.[0].clientX || 0 ) - arenaRect.left;
-        y = ((e as unknown as TouchEvent).changedTouches?.[0].clientY || 0 ) - arenaRect.top;
+      let x = 0
+      let y = 0
+      if (isTouch) {
+        x = ((e as unknown as TouchEvent).changedTouches?.[0].clientX || 0) - arenaRect.left
+        y = ((e as unknown as TouchEvent).changedTouches?.[0].clientY || 0) - arenaRect.top
       } else {
         x = (e as unknown as MouseEvent).clientX - arenaRect.left
         y = (e as unknown as MouseEvent).clientY - arenaRect.top
@@ -114,11 +114,11 @@ const CanvasArena = forwardRef<HTMLDivElement, CanvasArenaProps>(
       if (!ref || !("current" in ref) || !ref.current) return
 
       const arenaRect = ref.current.getBoundingClientRect()
-      let x = 0;
-      let y = 0;
-      if(isTouch){
-        x = ((e as unknown as TouchEvent).touches?.[0].clientX || 0 ) - arenaRect.left;
-        y = ((e as unknown as TouchEvent).touches?.[0].clientY || 0 ) - arenaRect.top;
+      let x = 0
+      let y = 0
+      if (isTouch) {
+        x = ((e as unknown as TouchEvent).touches?.[0].clientX || 0) - arenaRect.left
+        y = ((e as unknown as TouchEvent).touches?.[0].clientY || 0) - arenaRect.top
       } else {
         x = (e as unknown as MouseEvent).clientX - arenaRect.left
         y = (e as unknown as MouseEvent).clientY - arenaRect.top
@@ -498,9 +498,11 @@ const CanvasArena = forwardRef<HTMLDivElement, CanvasArenaProps>(
     return (
       <div
         ref={ref}
-        className={cn(`sticky bottom-0 max-h-[60vh] bg-linear-to-t from-[#ffe4e4] to-transparent backdrop-blur-[2px] w-full h-[400px] border-2 rounded-lg`,
-          selectedTower ? "border-primary cursor-crosshair" : "border-border"
-        ,`transition-colors overflow-hidden`)}
+        className={cn(
+          `sticky bottom-0 max-h-[60vh] bg-linear-to-t from-[#ffe4e4] to-transparent backdrop-blur-[2px] w-full h-[400px] border-2 rounded-lg`,
+          selectedTower ? "border-primary cursor-crosshair" : "border-border",
+          `transition-colors overflow-hidden`,
+        )}
         onClick={handleClick}
         onMouseMove={(e) => handleMouseMove(false)(e)}
         onTouchMove={(e) => handleMouseMove(true)(e)}
@@ -513,7 +515,7 @@ const CanvasArena = forwardRef<HTMLDivElement, CanvasArenaProps>(
           }
         }}
         style={{
-          background: 'linear-gradient(0deg,#ffe4e4,transparent)'
+          background: "linear-gradient(0deg,#ffe4e4,transparent)",
         }}
         // style={{
         //   position: sticky;
@@ -523,7 +525,7 @@ const CanvasArena = forwardRef<HTMLDivElement, CanvasArenaProps>(
         //   backdrop-filter: blur(2px);
         // }}
       >
-        <canvas ref={canvasRef} className="absolute inset-0" />
+        <canvas ref={canvasRef} className="absolute inset-0 mx-auto" />
 
         {/* Instructions */}
         <div className="absolute inset-0 flex items-center justify-center pointer-events-none">
