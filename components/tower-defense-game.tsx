@@ -315,7 +315,26 @@ export default function TowerDefenseGame() {
           if (now - tower.lastAttackTime < tower.cooldown) {
             return // Skip this tower
           }
+  currentTowers.forEach((t2, t2Id) => {
+            if(towerId != t2Id){
+              const towerX = tower.position.x
+              const towerY = tower.position.y
+              const t2XPixels = t2.position.x
+              const t2YPixels = t2.position.y
+              const dx = towerX - t2XPixels
+              const dy = towerY - t2YPixels
 
+              const distance = Math.sqrt(Math.pow(dx, 2) + Math.pow(dy, 2))
+              const speed = .5
+              const inRange = distance <= tower.range/2
+              if(inRange){
+              
+                const moveX = (dx / distance) * speed
+                const moveY = (dy / distance) * speed
+                updatedTowers.set(towerId, {...tower, position: { ...tower.position, x: tower.position.x + moveX , y: tower.position.y + moveY }})
+              }
+            }
+          })
           // Find enemies in range
           let targetFound = false
 
